@@ -62,9 +62,9 @@ def get_train_test_data(train_transaction_path, train_identity_path, threshold=0
     train = drop_features(train, threshold)
 
     cat_features = get_cat_features(train)
-    num_featurs = get_num_features(train, cat_features)
+    num_features = get_num_features(train, cat_features)
 
-    fill_empty_cells(train, cat_features, num_featurs)
+    fill_empty_cells(train, cat_features, num_features)
 
     train = feature_engineering(train)
 

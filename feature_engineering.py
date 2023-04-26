@@ -12,7 +12,7 @@ def make_hour_cos(seconds):
 
 
 def feature_engineering(train):
-    make_hour_cos(train['TransactionDT'])
-    make_hour_cos(train['TransactionDT'])
+    train['hour_sin'] = make_hour_cos(train['TransactionDT'])
+    train['hour_cos'] = make_hour_cos(train['TransactionDT'])
 
     return train
