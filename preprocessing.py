@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from category_encoders.woe import WOEEncoder
 from sklearn.compose import ColumnTransformer
@@ -27,13 +26,8 @@ def get_num_features(train, cat_features):
 def drop_features(train, threshold):
     train = train.dropna(thresh=len(train) * threshold, axis=1)
 
-    print("all_columns:")
     use_cols = train.columns
-
-    print("cat_features:")
     cat_features = get_cat_features(train)
-
-    print("num_features:")
     num_features = get_num_features(train, cat_features)
 
     train[cat_features] = train[cat_features].astype(str)
@@ -66,13 +60,12 @@ def get_train_test_data(train_transaction_path, train_identity_path, threshold=0
     train = input_dataframe(train_transaction_path, train_identity_path)
     train['hour_sin'] = make_hour_sin(train['TransactionDT'])
     train['hour_cos'] = make_hour_cos(train['TransactionDT'])
-
     
     train = drop_features(train, threshold)
     cat_features = get_cat_features(train)
-    num_featurs = get_num_features(train, cat_features)
+    num_features = get_num_features(train, cat_features)
 
-    fill_empty_cells(train, cat_features, num_featurs)
+    fill_empty_cells(train, cat_features, num_features)
 
     data = train.drop(columns=['TransactionID', 'TransactionDT'])
     target = 'isFraud'
@@ -82,8 +75,8 @@ def get_train_test_data(train_transaction_path, train_identity_path, threshold=0
         num_features.remove(target)
     cat_features = data.select_dtypes(exclude=np.number).columns
 
-    x_train, x_test, y_train, y_test = train_test_split(data.drop([target], axis=1),
-                                                        data[target],
+    x_train, x_test, y_train, y_test = train_test_split(data[num_features + list(cat_features)],
+                                                        data['isFraud'],
                                                         train_size=0.8)
 
     to_ohe, to_emb = get_encoders(x_train, cat_features)
