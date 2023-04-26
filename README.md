@@ -6,7 +6,7 @@
 
 Based on the Kaggle competition [1], we will try to predict fraudulent transactions using a combination of nature-inspired algorithms and machine learning techniques and models.
 
-<h3>Requirements</h3>
+<h3>Requirements (pip install -r requirements.txt)</h3>
 <ul>
     <li>niapy ~= 2.0.0rc14</li>
     <li>tqdm ~= 4.64.1</li>
@@ -23,3 +23,4 @@ https://www.kaggle.com/competitions/ieee-fraud-detection/data
 
 <h3>References</h3>
 [1] https://www.kaggle.com/c/ieee-fraud-detection/overview
+[2] https://www.kaggle.com/competitions/ieee-fraud-detection/data
