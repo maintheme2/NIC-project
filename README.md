@@ -18,9 +18,6 @@ Based on the Kaggle competition [1], we will try to predict fraudulent transacti
     <li>imblearn ~= 0.0</li>
 </ul>
 
-<h3>Dataset</h3>
-https://www.kaggle.com/competitions/ieee-fraud-detection/data
-
 <h3>References</h3>
 [1] https://www.kaggle.com/c/ieee-fraud-detection/overview
 [2] https://www.kaggle.com/competitions/ieee-fraud-detection/data
