@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from category_encoders.woe import WOEEncoder
 from sklearn.compose import ColumnTransformer
@@ -64,22 +63,21 @@ def get_encoders(data, cat_features):
 
 def get_train_test_data(train_transaction_path, train_identity_path, threshold=0.5):
     train = input_dataframe(train_transaction_path, train_identity_path)
-    
+
     train = drop_features(train, threshold)
 
-    
     cat_features = get_cat_features(train)
     num_featurs = get_num_features(train, cat_features)
 
     fill_empty_cells(train, cat_features, num_featurs)
 
     train = feature_engineering(train)
-    
+
     data = train.drop(columns=['TransactionID', 'TransactionDT'])
     target = 'isFraud'
 
     num_features = data.select_dtypes(include=np.number).columns.to_list()
-    if target in num_features: 
+    if target in num_features:
         num_features.remove(target)
     cat_features = data.select_dtypes(exclude=np.number).columns
 
