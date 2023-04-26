@@ -26,13 +26,8 @@ def get_num_features(train, cat_features):
 def drop_features(train, threshold):
     train = train.dropna(thresh=len(train) * threshold, axis=1)
 
-    print("all_columns:")
     use_cols = train.columns
-
-    print("cat_features:")
     cat_features = get_cat_features(train)
-
-    print("num_features:")
     num_features = get_num_features(train, cat_features)
 
     train[cat_features] = train[cat_features].astype(str)
