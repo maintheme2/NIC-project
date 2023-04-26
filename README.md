@@ -19,5 +19,5 @@ Based on the Kaggle competition [1], we will try to predict fraudulent transacti
 </ul>
 
 <h3>References</h3>
-[1] https://www.kaggle.com/c/ieee-fraud-detection/overview <p></p>
-[2] https://www.kaggle.com/competitions/ieee-fraud-detection/data
+[1] Competition overview - https://www.kaggle.com/c/ieee-fraud-detection/overview <p></p>
+[2] Dataset - https://www.kaggle.com/competitions/ieee-fraud-detection/data
