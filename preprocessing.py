@@ -5,6 +5,7 @@ from category_encoders.woe import WOEEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.model_selection import train_test_split
 from feature_engineering import feature_engineering
+from sklearn.impute import SimpleImputer
 
 
 def input_dataframe(train_transaction_path, train_identity_path):
@@ -18,8 +19,9 @@ def get_cat_features(train):
 
 
 def get_num_features(train, cat_features):
-    exclude = ['TransactionID', 'TransactionDT', 'isFraud'].extend(cat_features)
-    num_features = train.select_dtypes(include=np.number, exclude=exclude).columns
+    exclude = ['TransactionID', 'TransactionDT', 'isFraud']
+    exclude.extend(cat_features.tolist())
+    num_features = train.drop(exclude, axis=1).columns
     return num_features
 
 
@@ -31,7 +33,7 @@ def drop_features(train, threshold):
     num_features = get_num_features(train, cat_features)
 
     train[cat_features] = train[cat_features].astype(str)
-    train[num_features] = train[num_features].astype(np.float)
+    train[num_features] = train[num_features].astype(np.float32)
 
     return train[use_cols]
 
@@ -40,7 +42,10 @@ def fill_empty_cells(train, cat_features, num_features):
     median_values = train[num_features].median()
 
     train[num_features] = train[num_features].fillna(median_values)
-    train[cat_features] = train[cat_features].replace("nan", "missing")
+    imputer = SimpleImputer(missing_values=np.NaN, strategy='most_frequent')
+    for cat in cat_features:
+        train[cat] = imputer.fit_transform(train[cat].values.reshape(-1,1))[:,0]
+    return train
 
 
 def get_encoders(data, cat_features):
@@ -58,23 +63,26 @@ def get_encoders(data, cat_features):
 
 def get_train_test_data(train_transaction_path, train_identity_path, threshold=0.5):
     train = input_dataframe(train_transaction_path, train_identity_path)
-
     train = drop_features(train, threshold)
 
     cat_features = get_cat_features(train)
-    num_features = get_num_features(train, cat_features)
+    num_featurs = get_num_features(train, cat_features)
 
-    fill_empty_cells(train, cat_features, num_features)
+    train = fill_empty_cells(train, cat_features, num_featurs)
+
+    # print("BEFORE TRAIN", (train.isnull().sum() > 0).sum())
 
     train = feature_engineering(train)
 
     data = train.drop(columns=['TransactionID', 'TransactionDT'])
     target = 'isFraud'
 
-    num_features = data.select_dtypes(include=np.number).columns.to_list()
+    # print("TRAIN", (train.isnull().sum() > 0).sum())
+    # print(train.isna().any())
+    num_features = data._get_numeric_data().columns.to_list()
     if target in num_features:
         num_features.remove(target)
-    cat_features = data.select_dtypes(exclude=np.number).columns
+    cat_features = [x for x in data.columns if x not in num_features and x != target]
 
     x_train, x_test, y_train, y_test = train_test_split(data.drop([target], axis=1),
                                                         data[target],
@@ -90,6 +98,8 @@ def get_train_test_data(train_transaction_path, train_identity_path, threshold=0
         [('scaler', scaler, num_features),
          ('ohe', ohe, to_ohe),
          ('woe', woe, to_emb)], remainder='passthrough', n_jobs=-1)
+
+    column_trans.fit(x_train, y_train)
 
     return (pd.DataFrame(column_trans.fit_transform(x_train, y_train)),
             pd.DataFrame(column_trans.transform(x_test)),

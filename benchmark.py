@@ -3,6 +3,7 @@ from NiaPy.benchmarks import Benchmark
 
 class ClassificationBenchmark(Benchmark):
     def __init__(self, model_fn, eval_fn, x_train, y_train, x_test, y_test):
+        super().__init__(0, 1)
         self.x_train = x_train
         self.y_train = y_train
         self.x_test = x_test
@@ -10,22 +11,20 @@ class ClassificationBenchmark(Benchmark):
         self.model_fn = model_fn
         self.eval_fn = eval_fn
 
-        Benchmark.__init__(self, 0, 1)
-
     def get_length(self):
-        return len(self.x_train.columns)
+        return self.x_train.shape[1]
 
     def select_columns(self, solution_vec):
         return self.x_train.columns[solution_vec >= 0.5].tolist()
 
     def function(self):
-        def evaluate(_, solution_vec):
-            selected_columns = self.select_columns(solution_vec)
+        def evaluate(solution):
+            selected_columns = self.select_columns(solution)
 
             if len(selected_columns) == 1 and not isinstance(selected_columns[0], str):
                 selected_columns = selected_columns[0]
 
-            if len(selected_columns) < 1:
+            if not selected_columns:
                 return 1
 
             clf = self.model_fn()

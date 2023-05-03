@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 
 def make_hour_sin(TransactionDT):
@@ -32,13 +31,13 @@ def feature_engineering(data):
     data['day'] = get_Transaction_Day(data['TransactionDT'])
 
     data['uid1'] = (data.day - data.D1).astype(str) + '_' + \
-        data.P_emaildomain.astype(str)
+                   data.P_emaildomain.astype(str)
 
     data['uid2'] = (data.card1.astype(str) + '_' +
                     data.addr1.astype(str) + '_' +
                     (data.day - data.D1).astype(str) + '_' +
                     data.P_emaildomain.astype(str))
-    
+
     data = data_group_features(data, 'uid1')
 
     return data
@@ -46,16 +45,8 @@ def feature_engineering(data):
 
 def data_group_features(data, col):
     groupped_dataset = data.groupby(col)
-    data[col+'_count_'] = groupped_dataset.TransactionID.transform('count').astype('int32')
-    data[col+'_next_dt'] = groupped_dataset.TransactionDT.shift(-1)
-    data[col+'_next_dt'] -= data.TransactionDT
-    data[col+'_mean_dt'] = groupped_dataset[col+'_next_dt'].transform('mean').astype('float32')
-    data[col+'_std_dt'] = groupped_dataset[col+'_next_dt'].transform('std').astype('float32')
-    data[col+'_median_dt'] = groupped_dataset[col+'_next_dt'].transform('median').astype('float32')
-
-    data[col+'_next_amt'] = groupped_dataset.TransactionAmt.shift(-1)
-    data[col+'_mean_amt'] = groupped_dataset.TransactionAmt.transform('mean').astype('float32')
-    data[col+'_std_amt'] = groupped_dataset.TransactionAmt.transform('std').astype('float32')
-    data[col+'_median_amt'] = groupped_dataset.TransactionAmt.transform('median').astype('float32')
+    data[col + '_count_'] = groupped_dataset.TransactionID.transform('count').astype('int32')
+    data[col + '_mean_amt'] = groupped_dataset.TransactionAmt.transform('mean').astype('float32')
+    data[col + '_median_amt'] = groupped_dataset.TransactionAmt.transform('median').astype('float32')
 
     return data
