@@ -4,7 +4,7 @@
 <img src="img/icon.png" width="200">
 </p>
 
-Based on the Kaggle competition [1], we will try to predict fraudulent transactions using a combination of nature-inspired algorithms and machine learning techniques and models.
+Based on the Kaggle competition [1], we will try to predict fraudulent transactions using a combination of nature-inspired algorithms and machine learning techniques and models. The nature-inspired algorithms that will be used include bat algorithm, particle swarm optimization, and firefly algorithm. These algorithms will be combined with machine learning models such as logistic regression, decision trees, and random forests to improve the accuracy of the predictions.
 
 <h3>Requirements (pip install -r requirements.txt)</h3>
 <ul>
